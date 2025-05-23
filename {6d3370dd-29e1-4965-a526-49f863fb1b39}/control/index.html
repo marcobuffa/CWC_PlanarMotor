@@ -15,7 +15,13 @@
                 {'sizeX': 100, 'sizeY': 100, 'posX': 400, 'posY': 400},
             ]; //array elementi spostabili
             var wincc = false; //al momento non sono in wincc (verrà verificato in seguito)
-            var newTileNumber = tiles.length;
+            var newTileNumber = 0;
+
+            //funzione per la generazione di un codice RGB casuale
+            function RandomColor(){
+                let RGB = Math.floor(Math.random()*16777215).toString(16);
+                return '0x' + RGB.padStart(6, '0');
+            }
 
             //funzione per creare il playground
             function CreatePlayground(sizeX, sizeY){
@@ -26,20 +32,14 @@
                 return divToAdd;
             }
 
-            //funzione per la generazione di un codice RGB casuale
-            function RandomColor(){
-                let RGB = Math.floor(Math.random()*16777215).toString(16);
-                return '0x' + RGB.padStart(6, '0');
+            //funzione per aggiornare un tile
+            function UpdateTile(tile){
+                let svgToUpdate = document.getElementById(tile.id);
+                svgToUpdate.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px');
             }
 
-            //funzione per la creazione di un nuovo tile
+            //funzione per creare un tile
             function NewTile(tile){
-                //struttura immagine SVG tile
-                //SVG
-                // |
-                // +-- rettangolo
-                // +-- testo
-
                 if (!tile.color) tile.color = RandomColor(); // se non c'è il colore, inventalo
                 if (!tile.id) { //se non viene passato un id
                     tile.id = 'tile' + newTileNumber; //calcola nuovo id
@@ -69,7 +69,7 @@
                 svgToAdd.appendChild(rectToAdd); //aggiungi rettangolo alla SVG
                 svgToAdd.appendChild(textToAdd); //aggiungi testo alla SVG
                 divToAdd.appendChild(svgToAdd); //aggiungi SVG al playground
-                svgToAdd.setAttribute('style', 'position: absolute; top: ' + tile.posX + 'px; left: ' + tile.posY + 'px'); //posizione iniziale SVG (altrimenti viene inserita a caso)
+                svgToAdd.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px'); //posizione iniziale SVG (altrimenti viene inserita a caso)
             };
 
             CreatePlayground(800, 800);
