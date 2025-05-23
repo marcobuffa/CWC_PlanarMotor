@@ -34,12 +34,24 @@
 
             //funzione per aggiornare un tile
             function UpdateTile(tile){
-                let svgToUpdate = document.getElementById(tile.id);
-                svgToUpdate.childNodes[2].textContent=tile.id;
-                svgToUpdate.childNodes[2].textContent='posX: ' + tile.posX;
-                svgToUpdate.childNodes[3].textContent='posY: ' + tile.posY;
-                svgToUpdate.childNodes[4].textContent='posZ: ' + tile.posZ;
-                svgToUpdate.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px');
+                let svg = document.getElementById(tile.id);
+                
+                //aggiorna testi;
+                svg.childNodes[1].textContent = 'id: ' + tile.id;
+                svg.childNodes[2].textContent = 'posX: ' + tile.posX;
+                svg.childNodes[3].textContent = 'posY: ' + tile.posY;
+                svg.childNodes[4].textContent = 'posZ: ' + tile.posZ;
+
+                //Aggiorna dimensioni
+                svg.setAttribute('width', tile.sizeX); //larghezza SVG
+                svg.setAttribute('height', tile.sizeY); //altezza SVG
+                svg.childNodes[0].setAttribute('width', tile.sizeX); //larghezza rettangolo
+                svg.childNodes[0].setAttribute('height', tile.sizeY); //altezza rettangolo
+                svg.childNodes[0].setAttribute('rx', tile.sizeX/8); //raggio
+                svg.childNodes[0].setAttribute('ry', tile.sizeY/8); //raggio
+
+                //aggiorna posizione
+                svg.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px');
             }
 
             //funzioni per la creazione delle SVG dei tile
@@ -81,7 +93,7 @@
 
                 const svgToAdd = createSVG(document.createElementNS("http://www.w3.org/2000/svg", 'svg'), tile);
                 const rectToAdd = createRect(document.createElementNS("http://www.w3.org/2000/svg", 'rect'), tile);
-                const textToAdd1 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'Id: '+ tile.id, '50%', '20%')
+                const textToAdd1 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'id: '+ tile.id, '50%', '20%')
                 const textToAdd2 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posX: ' + tile.posX, '50%', '40%')
                 const textToAdd3 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posY: ' + tile.posY, '50%', '60%')
                 const textToAdd4 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posZ: ' + tile.posZ, '50%', '80%')
@@ -124,6 +136,7 @@
                         tiles = WebCC.Properties.Tiles;
                         CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
                         tiles.forEach(tile => {CreateTile(tile)});
+                        setProperty({'key': 'Tiles', 'value': WebCC.Properties.Tiles});
                         WebCC.onPropertyChanged.subscribe(setProperty);
                         wincc = true;
                     } else {
@@ -131,7 +144,6 @@
                         tiles = [{'id': 'tile0', 'sizeX': 100, 'sizeY': 100, 'posX': 0, 'posY': 0, 'posZ': 0}];
                         CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
                         tiles.forEach(tile => {CreateTile(tile)});
-                        setInterval("tiles[0].posX+=10; tiles[0].posY+=5; UpdateTile(tiles[0])", 1000);
                     }
                 },
                 {
@@ -140,9 +152,7 @@
                     properties: {
                         PlaygroundSizeX: 800,
                         PlaygroundSizeY: 800,
-                        Tiles: [
-                            {'id': 'tile0', 'sizeX': 100, 'sizeY': 100, 'posX': 0, 'posY': 0, 'posZ': 0}
-                        ]
+                        Tiles: [{'id': 'tile0', 'sizeX': 100, 'sizeY': 100, 'posX': 0, 'posY': 0, 'posZ': 0}]
                     }
                 },
                 ["HMI"],
