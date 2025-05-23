@@ -2,86 +2,64 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Palletizer CWC</title>
+        <title>Planar Motor CWC</title>
         <link rel="stylesheet" href="css/style.css">
-        <script src="libs/plain-draggable.min.js"></script>
         <script src="libs/webcc.min.js"></script>
     </head>
     <body>
-        <div id="PalletContainer"></div>
+        <div id="MainContainer"></div>
 
         <script>
-            //configurazione spazio tridimensionale:
-            //piano del pallet: X (orizzontale), Z (verticale)
-            //altezza sul pallet: Y
-
-            //configurazione iniziale scatole
-            var JSconfig = [{'id': 'box0', 'sizeX': 150, 'sizeZ': 100, 'sizeY': 100, 'posX': 0, 'posY': 50, 'posZ': 0, 'color': '0x009999'}];
-
-            //dimensione iniziale pallet
-            var JSplayGround = {'sizeX': 800, 'sizeZ': 600};
-
-            var draggable = []; //array elementi spostabili
+            var tiles = [
+                {'sizeX': 100, 'sizeY': 100, 'posX': 100, 'posY': 100},
+                {'sizeX': 100, 'sizeY': 100, 'posX': 400, 'posY': 400},
+            ]; //array elementi spostabili
             var wincc = false; //al momento non sono in wincc (verrà verificato in seguito)
-            var selectedId = ''; //nessuna scatola selezionata
-            var newBoxNumber = JSconfig.length; //prossimo id scatola (in caso di aggiunta senza specificare l'id)
+            var newTileNumber = tiles.length;
 
-            //funzione per creare il pallet (in base alle misure passate come parametro)
-            function CreatePlayground(){
-                const divToAdd = document.createElement('div'); //div contenente il pallet
-                divToAdd.setAttribute('id', 'PalletStage'); //aggiungi l'id "PalletStage" al div
-                //divToAdd.setAttribute('style', 'width: ' + JSplayGround.sizeX + 'px; height: ' + JSplayGround.sizeZ + 'px; background-color: black;'); //stile e dimensioni pallet
-                divToAdd.setAttribute('style', 'width: ' + JSplayGround.sizeX + 'px; height: ' + JSplayGround.sizeZ + 'px;'); //stile e dimensioni pallet
-                document.getElementById('PalletContainer').appendChild(divToAdd); //aggiungi il pallet alla pagina
+            //funzione per creare il playground
+            function CreatePlayground(sizeX, sizeY){
+                const divToAdd = document.createElement('div');
+                divToAdd.setAttribute('id', 'PlanarContainer');
+                divToAdd.setAttribute('style', 'width: ' + sizeX + 'px; height: ' + sizeY + 'px;');
+                document.getElementById('MainContainer').appendChild(divToAdd);
+                return divToAdd;
             }
 
-            //funzione per la generazione di un codice RGB casuale (nel caso venisse aggiunta una scatola senza colore)
+            //funzione per la generazione di un codice RGB casuale
             function RandomColor(){
                 let RGB = Math.floor(Math.random()*16777215).toString(16);
                 return '0x' + RGB.padStart(6, '0');
             }
 
-            //funzione per generare le coordinate del centro della scatola centrata sul playground (draggable fornisce top/left a partire dall'angolo
-            //superiore a sinistra del playground)
-            function GetCenteredPos(box, pos, playground){
-                box.posX = Math.round((pos.left + box.sizeX/2) - playground.sizeX/2);
-                box.posZ = Math.round((pos.top + box.sizeZ/2) - playground.sizeZ/2);
-            }
-
-            //funzioni per convertire le coordinate "centrate" in coordinate top/left
-            function GetRealTop(box, playground){
-                return (box.posZ + playground.sizeZ/2 - box.sizeZ/2);
-            }
-            function GetRealLeft(box, playground){
-                return box.posX + playground.sizeX/2 - box.sizeX/2;
-            }
-
-            //funzione per la creazione di una nuova scatola
-            function NewBox(box){
-                //struttura immagine SVG scatola
+            //funzione per la creazione di un nuovo tile
+            function NewTile(tile){
+                //struttura immagine SVG tile
                 //SVG
                 // |
                 // +-- rettangolo
                 // +-- testo
 
-                if (!box.color) box.color = RandomColor(); // se non c'è il colore, inventalo
-                if (!box.posY) box.posY = box.sizeY/2; // se non c'è la posizione Y, appoggia la scatola sul pallet
+                if (!tile.color) tile.color = RandomColor(); // se non c'è il colore, inventalo
+                if (!tile.id) { //se non viene passato un id
+                    tile.id = 'tile' + newTileNumber; //calcola nuovo id
+                    newTileNumber++;
+                }
 
-                const divToAdd = document.getElementById('PalletStage'); //div a cui aggiungere la scatola
+                const divToAdd = document.getElementById('PlanarContainer'); //div a cui aggiungere la scatola
                 const svgToAdd = document.createElementNS("http://www.w3.org/2000/svg", 'svg'); //intestazione SVG
                 const rectToAdd = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); //intestazione rettangolo
                 const textToAdd = document.createElementNS("http://www.w3.org/2000/svg", 'text'); //intestazione testo
-                const textToAddToText = document.createTextNode(box.id); //testo da inserire sulla scatola
-                svgToAdd.setAttribute('class', 'draggable'); //aggiungi la classe "draggable" alla SVG (serve poi per creare gli array velocemente)
-                svgToAdd.setAttribute('width', box.sizeX); //larghezza SVG
-                rectToAdd.setAttribute('width', box.sizeX); //larghezza rettangolo
-                svgToAdd.setAttribute('height', box.sizeZ); //altezza SVG
-                rectToAdd.setAttribute('height', box.sizeZ); //altezza rettangolo
-                //rectToAdd.setAttribute('rx', box.sizeX/5); //raggio
-                //rectToAdd.setAttribute('ry', box.sizeZ/5); //raggio
-                svgToAdd.setAttribute('id', box.id); //id scatola (viene inserito nell'id della SVG)
-                
-                rectToAdd.setAttribute('style', 'fill:' + box.color.replace('0x', '#') + '80' + '; stroke-width: 2; stroke: white'); //bordo rettangolo
+                const textToAddToText = document.createTextNode(tile.id); //testo da inserire sulla scatola
+                svgToAdd.setAttribute('class', 'planar'); //aggiungi la classe "planar" alla SVG
+                svgToAdd.setAttribute('width', tile.sizeX); //larghezza SVG
+                rectToAdd.setAttribute('width', tile.sizeX); //larghezza rettangolo
+                svgToAdd.setAttribute('height', tile.sizeY); //altezza SVG
+                rectToAdd.setAttribute('height', tile.sizeY); //altezza rettangolo
+                rectToAdd.setAttribute('rx', tile.sizeX/8); //raggio
+                rectToAdd.setAttribute('ry', tile.sizeY/8); //raggio
+                svgToAdd.setAttribute('id', tile.id); //id scatola (viene inserito nell'id della SVG)
+                rectToAdd.setAttribute('style', 'fill:' + tile.color.replace('0x', '#') + '80' + '; stroke-width: 2; stroke: white'); //bordo rettangolo
                 textToAdd.setAttribute('x', '50%'); //posizione orizzontale testo
                 textToAdd.setAttribute('y', '50%'); //posizione verticale testo
                 textToAdd.setAttribute('dominant-baseline', 'middle'); //allineamento verticale testo
@@ -90,103 +68,12 @@
                 textToAdd.appendChild(textToAddToText); //crea testo
                 svgToAdd.appendChild(rectToAdd); //aggiungi rettangolo alla SVG
                 svgToAdd.appendChild(textToAdd); //aggiungi testo alla SVG
-                divToAdd.appendChild(svgToAdd); //aggiungi SVG al pallet
-
-                //crea nuovo elemento per il pool draggable (la nuova scatola)
-                drag = new PlainDraggable(document.getElementById(box.id),
-                    {
-                        //imposta posizione iniziale
-                        //left: box.posX,
-                        //top: box.posZ,
-
-                        onMove: function(nuovaPos){ //funzione chiamata durante lo spostamento della scatola
-                            this.position(); //mantieni aggiornata la posizione
-                        },
-                        onDragStart: function (pointerXY){ //funzione chiamata al tocco/click della scatola (anche se non si è mossa)
-                            // uso questa funzione per identificare
-                            // anche visivamente qual è l'ultima scatola
-                            // che è stata manipolata
-                            // (ad esempio per cancellarla o ruotarla)
-                            selectedId = this.element.id; //aggiorna id dell'ultima scatola toccata
-                            let draggableElements = Array.from(document.getElementsByClassName('draggable')); //crea array HTML con tutte le scatole
-                            //reset stile originale di tutte le scatole
-                            draggableElements.forEach(element => {
-                                element.childNodes[0].style["stroke-width"] = "2";
-                            });
-                            //evidenzia scatola selezionata
-                            document.getElementById(this.element.id).childNodes[0].style["stroke-width"] = "8";
-                            if (wincc) WebCC.Events.fire("BoxSelected", selectedId); //genera evento di selezione della scatola
-                        },
-                        onDrag/*End*/: function(nuovaPos){ //funzione chiamata durante il trascinamento della scatola
-                            //aggiorna stringa json scatole con le nuove posizioni
-                            let theBox = JSconfig.find(x => x.id == box.id);
-                            GetCenteredPos(theBox, nuovaPos, JSplayGround);
-                            if (wincc) WebCC.Events.fire("BoxMoving", JSON.stringify(theBox)); //genera evento di spostamento scatola in realtime passando la scatola come argomento
-                        },
-                        onDragEnd: function(nuovaPos){ //funzione chiamata al rilascio della scatola (anche se non si è mossa)
-                            //aggiorna stringa json scatole con le nuove posizioni
-                            let theBox = JSconfig.find(x => x.id == box.id);
-                            GetCenteredPos(theBox, nuovaPos, JSplayGround);
-                            console.log(theBox);
-                            if (wincc) WebCC.Events.fire("BoxReleased", JSON.stringify(JSconfig)); //genera evento di spostamento scatola passando la nuova configurazione come argomento
-                        }
-                    }
-                );
-                draggable.push(drag); //aggiungila al pool
-
-                svgToAdd.setAttribute('style', 'position: absolute; top: ' + GetRealTop(box, JSplayGround) + 'px; left: ' + GetRealLeft(box, JSplayGround) + 'px'); //posizione iniziale SVG (altrimenti viene inserita a caso)
-
-                //ricalcola lo snap di tutte le scatole (ogni scatola si appiccica alle altre e ai bordi del pallet)
-                let j = 0;
-                draggable.forEach(element => {
-                    let draggableElements = Array.from(document.getElementsByClassName('draggable')); //crea array di tutte le scatole
-                    draggableElements.splice(j, 1); //rimuovi la scatola stessa
-                    draggableElements.push(document.getElementById('PalletStage')); //aggiungi bordo pallet
-                    element.snap = draggableElements; //assegna nuovo array di snap
-                    j++; //passa alla scatola successiva
-                });
-
-                if (wincc) WebCC.Events.fire("BoxCreated", JSON.stringify(box)); //genera evento di creazione della scatola
+                divToAdd.appendChild(svgToAdd); //aggiungi SVG al playground
+                svgToAdd.setAttribute('style', 'position: absolute; top: ' + tile.posX + 'px; left: ' + tile.posY + 'px'); //posizione iniziale SVG (altrimenti viene inserita a caso)
             };
 
-            //funzione per l'aggiornamento della posizione delle scatole sul pallet
-            function UpdateBoxes(){
-                let j = 0;
-                JSconfig.forEach(element => {
-                    draggable[j].left = Number(element.posX);
-                    draggable[j].top = Number(element.posZ);
-                    j++;
-                });
-            };
-            
-            //funzione per aggiungere una scatola
-            function AddBoxByHTML(box){
-                if (!box.id) { //se non viene passato un id
-                    box.id = 'box' + newBoxNumber; //calcola nuovo id
-                    newBoxNumber++;
-                }
-                NewBox(box); //crea scatola plain-draggable.js
-                JSconfig.push(box); //aggiungila alla stringa json
-            }
-
-            // funzione per eliminare una scatola
-            function DelBoxByHTML(BoxId){
-                if (BoxId == null) {//se non è indicato quale scatola cancellare
-                    if (selectedId !== '') { //se c'è una scatola selezionata
-                        draggable.splice(draggable.findIndex(x => x.element.id == selectedId), 1); //elimina ultima scatola selezionata dagli elementi draggable
-                        JSconfig.splice(JSconfig.findIndex(x => x.id == selectedId), 1); //elimina ultima scatola selezionata dalla stringa json
-                        document.getElementById(selectedId).remove(); //elimina elemento grafico dal pallet
-                        if (wincc) WebCC.Events.fire("BoxDeleted", JSON.stringify(selectedId)); //genera evento di cancellazione della scatola
-                        if (wincc) WebCC.Events.fire("BoxSelected", ''); //cancella selezione verso WinCC
-                        selectedId = ''; //annulla selezione corrente (l'elemento non esiste più)
-                    }
-                } else {
-                    draggable.splice(draggable.findIndex(x => x.element.id == BoxId), 1); //elimina ultima scatola selezionata dagli elementi draggable
-                    JSconfig.splice(JSconfig.findIndex(x => x.id == BoxId), 1); //elimina ultima scatola selezionata dalla stringa json
-                    document.getElementById(BoxId).remove(); //elimina elemento grafico dal pallet
-                    if (wincc) WebCC.Events.fire("BoxDeleted", JSON.stringify(BoxId)); //genera evento di cancellazione della scatola
-                }
-            }
+            CreatePlayground(800, 800);
+            tiles.forEach(tile => {NewTile(tile)});
 
             //connessione con WinCC
             WebCC.start(
@@ -194,60 +81,14 @@
                     if (result) {
                         console.log("I'm in WinCC :-)");
                         wincc = true;
-                        JSconfig = JSON.parse(WebCC.Properties.InitialBoxesConfig);
-                        JSplayGround = JSON.parse(WebCC.Properties.PlayGroundConfig);
                     } else {
                         console.log("Let me alone: I'm not in WinCC :-(");
                     }
-
-                    CreatePlayground(); //crea pallet
-
-                    //crea scatole
-                    JSconfig.forEach(element => {
-                        NewBox(element);
-                    });
                 },
                 {
-                    methods: {
-                        AddBox: function(box){
-                            AddBoxByHTML(JSON.parse(box));
-                            WebCC.Events.fire("BoxReleased", JSON.stringify(JSconfig)); //aggiorna posizione scatole
-                        },
-                        DelBox: function(id){
-                            DelBoxByHTML(id);
-                            WebCC.Events.fire("BoxReleased", JSON.stringify(JSconfig)); //aggiorna posizione scatole
-                        },
-                        Reset: function(){
-                            //rimuovi tutto
-                            draggable.forEach(element => {
-                                element.remove();
-                            });
-                            document.getElementById('PalletStage').remove();
-                            draggable.length = 0;
-                            //ridisegna tutto
-                            JSplayGround = JSON.parse(WebCC.Properties.PlayGroundConfig);
-                            CreatePlayground();
-                            JSconfig = JSON.parse(WebCC.Properties.InitialBoxesConfig);
-                            JSconfig.forEach(element => {
-                                NewBox(element);
-                            });
-                            newBoxNumber = JSconfig.length; //ricomincia conteggio scatole per assegnare i nomi
-                            selectedId = ''; //nessuna scatola selezionata;
-                            WebCC.Events.fire("BoxSelected", ''); //cancella selezione verso WinCC
-                            WebCC.Events.fire("BoxReleased", JSON.stringify(JSconfig)); //aggiorna posizione scatole
-                        }
-                    },
-                    events: [
-                        "BoxSelected",
-                        "BoxMoving",
-                        "BoxReleased",
-                        "BoxCreated",
-                        "BoxDeleted"
-                    ],
-                    properties: {
-                        PlayGroundConfig: "{'sizeX': 800, 'sizeZ': 600}",
-                        InitialBoxesConfig: "[{'id': 'box0', 'sizeX': 100, 'sizeZ': 150, 'sizeY': 100, 'posX': -350, 'posY': 50, 'posZ': -225, 'color': '0x0099aa'}]",
-                    }
+                    methods: {},
+                    events: [],
+                    properties: {}
                 },
                 ["HMI"],
                 10000

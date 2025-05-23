@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="41mm"
+   height="41mm"
+   viewBox="0 0 41 41"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-39.5,-49.5)">
+    <rect
+       style="fill:#009090;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;opacity:1"
+       id="rect1"
+       width="40"
+       height="40"
+       x="40"
+       y="50"
+       ry="4.5000038" />
+    <text
+       xml:space="preserve"
+       style="font-weight:900;font-size:4.5861px;line-height:0.9;font-family:'Siemens Sans';-inkscape-font-specification:'Siemens Sans Heavy';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:36.2636;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.065;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="11.868191"
+       y="60"
+       id="text1"
+       transform="translate(47.558574,2.9999981)"><tspan
+         x="11.868191"
+         y="60"
+         id="tspan6"><tspan
+           style="font-weight:normal;-inkscape-font-specification:'Siemens Sans'"
+           id="tspan5">Id: n1</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:900;font-size:4.5861px;line-height:0.9;font-family:'Siemens Sans';-inkscape-font-specification:'Siemens Sans Heavy';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:36.2636;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.065;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="11.868191"
+       y="60"
+       id="text1-8"
+       transform="translate(47.558575,7.999998)"><tspan
+         x="11.868191"
+         y="60"
+         id="tspan8"><tspan
+           style="font-weight:normal;-inkscape-font-specification:'Siemens Sans'"
+           id="tspan7">PosX: n2 RotX: n3</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:900;font-size:4.5861px;line-height:0.9;font-family:'Siemens Sans';-inkscape-font-specification:'Siemens Sans Heavy';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:36.2636;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.065;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="11.868191"
+       y="60"
+       id="text1-8-9"
+       transform="translate(47.558575,12.999998)"><tspan
+         x="11.868191"
+         y="60"
+         id="tspan10"><tspan
+           style="font-weight:normal;-inkscape-font-specification:'Siemens Sans'"
+           id="tspan9">PosY: n4 RotY: n5</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:900;font-size:4.5861px;line-height:0.9;font-family:'Siemens Sans';-inkscape-font-specification:'Siemens Sans Heavy';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:36.2636;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.065;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       x="11.868191"
+       y="60"
+       id="text1-8-9-2"
+       transform="translate(47.558574,17.999998)"><tspan
+         x="11.868191"
+         y="60"
+         id="tspan12"><tspan
+           style="font-weight:normal;-inkscape-font-specification:'Siemens Sans'"
+           id="tspan11">PosZ: n6 RotZ: n7</tspan><tspan
+           y="60"
+           id="tspan13"> </tspan></tspan></text>
+  </g>
+</svg>
