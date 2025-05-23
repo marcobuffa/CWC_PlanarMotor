@@ -32,10 +32,49 @@
                     "PlaygroundSizeY": {
 						"type": "integer",
 						"default": 800
-					}
+					},
+                    "Tiles": {
+                        "$ref": "#/control/types/Tiles"
+                    }
                 }
             }
         },
-        "types": {}
+        "types": {
+            "Tile": {
+				"type": "object",
+				"properties": {
+                    "id": {
+						"type": "string",
+						"default": "tile"
+                    },
+					"sizeX": {
+						"type": "number",
+						"default": 100
+					},
+					"sizeY": {
+						"type": "number",
+						"default": 100
+					},
+					"posX": {
+						"type": "number",
+						"default": 0
+					},
+					"posY": {
+						"type": "number",
+						"default": 0
+					},
+					"posZ": {
+						"type": "number",
+						"default": 0
+					}                   
+				}
+			},
+            "Tiles": {
+				"type": "array",
+				"items": {
+					"$ref": "#/control/types/Tile"
+				}
+			}
+        }
     }
 }
