@@ -11,8 +11,8 @@
 
         <script>
             var tiles = [
-                {'sizeX': 100, 'sizeY': 100, 'posX': 100, 'posY': 100},
-                {'sizeX': 100, 'sizeY': 100, 'posX': 400, 'posY': 400},
+                {'sizeX': 100, 'sizeY': 100, 'posX': 100, 'posY': 100, 'posZ': 0},
+                {'sizeX': 100, 'sizeY': 100, 'posX': 400, 'posY': 400, 'posZ': 0},
             ]; //array elementi spostabili
             var wincc = false; //al momento non sono in wincc (verrà verificato in seguito)
             var newTileNumber = 0;
@@ -38,8 +38,36 @@
                 svgToUpdate.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px');
             }
 
+            //funzioni per la creazione delle SVG dei tile
+            function createSVG(svg, tile){
+                svg.setAttribute('class', 'planar'); //aggiungi la classe "planar" alla SVG
+                svg.setAttribute('width', tile.sizeX); //larghezza SVG
+                svg.setAttribute('height', tile.sizeY); //altezza SVG
+                svg.setAttribute('id', tile.id); //id scatola (viene inserito nell'id della SVG)
+                return svg;
+            }
+
+            function createRect(rect, tile){
+                rect.setAttribute('width', tile.sizeX); //larghezza rettangolo
+                rect.setAttribute('height', tile.sizeY); //altezza rettangolo
+                rect.setAttribute('rx', tile.sizeX/8); //raggio
+                rect.setAttribute('ry', tile.sizeY/8); //raggio
+                rect.setAttribute('style', 'fill:' + tile.color.replace('0x', '#') + '80' + '; stroke-width: 2; stroke: white'); //bordo rettangolo
+                return rect;
+            }
+
+            function createText(text, content, posX, posY){
+                text.setAttribute('x', posX); //posizione orizzontale testo
+                text.setAttribute('y', posY); //posizione verticale testo
+                text.setAttribute('dominant-baseline', 'middle'); //allineamento verticale testo
+                text.setAttribute('text-anchor', 'middle'); //allineamento orizzontale testo
+                text.setAttribute('style', 'fill: white; font-family: sans-serif;'); //stile testo
+                text.appendChild(document.createTextNode(content));
+                return text;
+            }
+
             //funzione per creare un tile
-            function NewTile(tile){
+            function CreateTile(tile){
                 if (!tile.color) tile.color = RandomColor(); // se non c'è il colore, inventalo
                 if (!tile.id) { //se non viene passato un id
                     tile.id = 'tile' + newTileNumber; //calcola nuovo id
@@ -47,33 +75,25 @@
                 }
 
                 const divToAdd = document.getElementById('PlanarContainer'); //div a cui aggiungere la scatola
-                const svgToAdd = document.createElementNS("http://www.w3.org/2000/svg", 'svg'); //intestazione SVG
-                const rectToAdd = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); //intestazione rettangolo
-                const textToAdd = document.createElementNS("http://www.w3.org/2000/svg", 'text'); //intestazione testo
-                const textToAddToText = document.createTextNode(tile.id); //testo da inserire sulla scatola
-                svgToAdd.setAttribute('class', 'planar'); //aggiungi la classe "planar" alla SVG
-                svgToAdd.setAttribute('width', tile.sizeX); //larghezza SVG
-                rectToAdd.setAttribute('width', tile.sizeX); //larghezza rettangolo
-                svgToAdd.setAttribute('height', tile.sizeY); //altezza SVG
-                rectToAdd.setAttribute('height', tile.sizeY); //altezza rettangolo
-                rectToAdd.setAttribute('rx', tile.sizeX/8); //raggio
-                rectToAdd.setAttribute('ry', tile.sizeY/8); //raggio
-                svgToAdd.setAttribute('id', tile.id); //id scatola (viene inserito nell'id della SVG)
-                rectToAdd.setAttribute('style', 'fill:' + tile.color.replace('0x', '#') + '80' + '; stroke-width: 2; stroke: white'); //bordo rettangolo
-                textToAdd.setAttribute('x', '50%'); //posizione orizzontale testo
-                textToAdd.setAttribute('y', '50%'); //posizione verticale testo
-                textToAdd.setAttribute('dominant-baseline', 'middle'); //allineamento verticale testo
-                textToAdd.setAttribute('text-anchor', 'middle'); //allineamento orizzontale testo
-                textToAdd.setAttribute('style', 'fill: white; font-family: sans-serif;'); //stile testo
-                textToAdd.appendChild(textToAddToText); //crea testo
+
+                const svgToAdd = createSVG(document.createElementNS("http://www.w3.org/2000/svg", 'svg'), tile);
+                const rectToAdd = createRect(document.createElementNS("http://www.w3.org/2000/svg", 'rect'), tile);
+                const textToAdd1 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'Id: '+ tile.id, '50%', '20%')
+                const textToAdd2 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posX: ' + tile.posX, '50%', '40%')
+                const textToAdd3 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posY: ' + tile.posY, '50%', '60%')
+                const textToAdd4 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posZ: ' + tile.posZ, '50%', '80%')
+
                 svgToAdd.appendChild(rectToAdd); //aggiungi rettangolo alla SVG
-                svgToAdd.appendChild(textToAdd); //aggiungi testo alla SVG
+                svgToAdd.appendChild(textToAdd1); //aggiungi testo alla SVG
+                svgToAdd.appendChild(textToAdd2); //aggiungi testo alla SVG
+                svgToAdd.appendChild(textToAdd3); //aggiungi testo alla SVG
+                svgToAdd.appendChild(textToAdd4); //aggiungi testo alla SVG
                 divToAdd.appendChild(svgToAdd); //aggiungi SVG al playground
                 svgToAdd.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px'); //posizione iniziale SVG (altrimenti viene inserita a caso)
             };
 
             CreatePlayground(800, 800);
-            tiles.forEach(tile => {NewTile(tile)});
+            tiles.forEach(tile => {CreateTile(tile)});
 
             //connessione con WinCC
             WebCC.start(
