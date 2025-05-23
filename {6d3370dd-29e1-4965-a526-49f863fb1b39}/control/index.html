@@ -13,8 +13,10 @@
             var tiles = [
                 {'sizeX': 100, 'sizeY': 100, 'posX': 100, 'posY': 100, 'posZ': 0},
                 {'sizeX': 100, 'sizeY': 100, 'posX': 400, 'posY': 400, 'posZ': 0},
-            ]; //array elementi spostabili
-            var wincc = false; //al momento non sono in wincc (verrà verificato in seguito)
+            ];
+            var PlaygroundSizeX = 800;
+            var PlaygroundSizeY = 800;
+            var wincc = false;
             var newTileNumber = 0;
 
             //funzione per la generazione di un codice RGB casuale
@@ -25,11 +27,14 @@
 
             //funzione per creare il playground
             function CreatePlayground(sizeX, sizeY){
+                const oldPlayGround = document.getElementById('PlanarContainer');
+                if (oldPlayGround) oldPlayGround.remove();
                 const divToAdd = document.createElement('div');
                 divToAdd.setAttribute('id', 'PlanarContainer');
                 divToAdd.setAttribute('style', 'width: ' + sizeX + 'px; height: ' + sizeY + 'px;');
                 document.getElementById('MainContainer').appendChild(divToAdd);
-                return divToAdd;
+
+                tiles.forEach(tile => {CreateTile(tile)});
             }
 
             //funzione per aggiornare un tile
@@ -92,23 +97,42 @@
                 svgToAdd.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px'); //posizione iniziale SVG (altrimenti viene inserita a caso)
             };
 
-            CreatePlayground(800, 800);
-            tiles.forEach(tile => {CreateTile(tile)});
+            //funzione callback per ricezione dati da WinCC
+            function setProperty(data) {
+                console.log('onPropertyChanged ' + data.key);
+                switch (data.key) {
+                    case 'PlaygroundSizeX':
+                        PlaygroundSizeX = data.value;
+                        CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
+                        break;
+                    case 'PlaygroundSizeY':
+                        PlaygroundSizeY = data.value;
+                        CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
+                        break;
+                }
+            }
 
             //connessione con WinCC
             WebCC.start(
                 function(result) {
                     if (result) {
                         console.log("I'm in WinCC :-)");
+                        setProperty({key: 'PlaygroundSizeX', value: WebCC.Properties.PlaygroundSizeX});
+                        setProperty({key: 'PlaygroundSizeY', value: WebCC.Properties.PlaygroundSizeY});
+                        CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
                         wincc = true;
                     } else {
                         console.log("Let me alone: I'm not in WinCC :-(");
+                        CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
                     }
                 },
                 {
                     methods: {},
                     events: [],
-                    properties: {}
+                    properties: {
+                        PlaygroundSizeX: 800,
+                        PlaygroundSizeY: 800
+                    }
                 },
                 ["HMI"],
                 10000

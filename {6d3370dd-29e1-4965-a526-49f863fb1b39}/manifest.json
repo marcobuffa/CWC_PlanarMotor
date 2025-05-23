@@ -24,7 +24,16 @@
             "api": {
                 "methods": {},
                 "events": {},
-                "properties": {}
+                "properties": {
+                    "PlaygroundSizeX": {
+						"type": "integer",
+						"default": 800
+					},
+                    "PlaygroundSizeY": {
+						"type": "integer",
+						"default": 800
+					}
+                }
             }
         },
         "types": {}
