@@ -37,18 +37,21 @@
                 let svg = document.getElementById(tile.id);
                 
                 //aggiorna testi;
-                svg.childNodes[1].textContent = 'id: ' + tile.id;
-                svg.childNodes[2].textContent = 'posX: ' + tile.posX;
-                svg.childNodes[3].textContent = 'posY: ' + tile.posY;
-                svg.childNodes[4].textContent = 'posZ: ' + tile.posZ;
+                svg.childNodes[1].textContent = 'id:' + tile.id;
+                svg.childNodes[2].textContent = 'posX:' + tile.posX.toFixed(2) + ' rotX:' + tile.rotX.toFixed(2);
+                svg.childNodes[3].textContent = 'posY:' + tile.posY.toFixed(2) + ' rotY:' + tile.rotY.toFixed(2);
+                svg.childNodes[4].textContent = 'posZ:' + tile.posZ.toFixed(2) + ' rotZ:' + tile.rotZ.toFixed(2);
 
-                //Aggiorna dimensioni
+                //aggiorna dimensioni
                 svg.setAttribute('width', tile.sizeX); //larghezza SVG
                 svg.setAttribute('height', tile.sizeY); //altezza SVG
                 svg.childNodes[0].setAttribute('width', tile.sizeX); //larghezza rettangolo
                 svg.childNodes[0].setAttribute('height', tile.sizeY); //altezza rettangolo
                 svg.childNodes[0].setAttribute('rx', tile.sizeX/8); //raggio
                 svg.childNodes[0].setAttribute('ry', tile.sizeY/8); //raggio
+
+                //Aggiorna rotazione
+                svg.setAttribute('transform', 'rotate(' + tile.rotZ + ')');
 
                 //aggiorna posizione
                 svg.setAttribute('style', 'position: absolute; left: ' + tile.posX + 'px; top: ' + tile.posY + 'px');
@@ -60,6 +63,7 @@
                 svg.setAttribute('width', tile.sizeX); //larghezza SVG
                 svg.setAttribute('height', tile.sizeY); //altezza SVG
                 svg.setAttribute('id', tile.id); //id scatola (viene inserito nell'id della SVG)
+                svg.setAttribute('transform', 'rotate(' + tile.rotZ + ')');
                 return svg;
             }
 
@@ -94,9 +98,9 @@
                 const svgToAdd = createSVG(document.createElementNS("http://www.w3.org/2000/svg", 'svg'), tile);
                 const rectToAdd = createRect(document.createElementNS("http://www.w3.org/2000/svg", 'rect'), tile);
                 const textToAdd1 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'id: '+ tile.id, '50%', '20%')
-                const textToAdd2 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posX: ' + tile.posX, '50%', '40%')
-                const textToAdd3 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posY: ' + tile.posY, '50%', '60%')
-                const textToAdd4 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posZ: ' + tile.posZ, '50%', '80%')
+                const textToAdd2 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posX:' + tile.posX.toFixed(2) + ' rotX:' + tile.rotX.toFixed(2), '50%', '40%')
+                const textToAdd3 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posY:' + tile.posY.toFixed(2) + ' rotY:' + tile.rotY.toFixed(2), '50%', '60%')
+                const textToAdd4 = createText(document.createElementNS("http://www.w3.org/2000/svg", 'text'), 'posZ:' + tile.posZ.toFixed(2) + ' rotZ:' + tile.rotZ.toFixed(2), '50%', '80%')
 
                 svgToAdd.appendChild(rectToAdd); //aggiungi rettangolo alla SVG
                 svgToAdd.appendChild(textToAdd1); //aggiungi testo alla SVG
@@ -141,7 +145,12 @@
                         wincc = true;
                     } else {
                         console.log("Let me alone: I'm not in WinCC :-(");
-                        tiles = [{'id': 'tile0', 'sizeX': 100, 'sizeY': 100, 'posX': 0, 'posY': 0, 'posZ': 0}];
+                        tiles = [{
+                                    'id': 'tile0',
+                                    'sizeX': 100, 'sizeY': 100,
+                                    'posX': 100, 'posY': 100, 'posZ': 0,
+                                    'rotX': 0, 'rotY': 0, 'rotZ': 45
+                                }];
                         CreatePlayground(PlaygroundSizeX, PlaygroundSizeY);
                         tiles.forEach(tile => {CreateTile(tile)});
                     }
@@ -152,7 +161,12 @@
                     properties: {
                         PlaygroundSizeX: 800,
                         PlaygroundSizeY: 800,
-                        Tiles: [{'id': 'tile0', 'sizeX': 100, 'sizeY': 100, 'posX': 0, 'posY': 0, 'posZ': 0}]
+                        Tiles: [{
+                                    'id': 'tile0',
+                                    'sizeX': 100, 'sizeY': 100,
+                                    'posX': 100, 'posY': 100, 'posZ': 0,
+                                    'rotX': 0, 'rotY': 0, 'rotZ': 45
+                                }]
                     }
                 },
                 ["HMI"],
