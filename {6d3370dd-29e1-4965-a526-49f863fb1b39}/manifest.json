@@ -1,0 +1,32 @@
+{
+    "mver": "1.2.0",
+    "control": {
+        "identity": {
+            "name": "PlanarMotor",
+            "version": "1.0",
+            "displayname": "Planar Motor Viewer",
+            "icon": "./assets/planarmotor.png",
+            "type": "guid://6d3370dd-29e1-4965-a526-49f863fb1b39",
+            "start": "./control/index.html"
+        },
+        "environment": {
+            "extensions": {
+                "HMI": {
+                    "mandatory": true,
+                    "version": "~1.0.0"
+                }
+            }
+        },
+        "metadata": {
+            "author": "Marco Buffa"
+        },
+        "contracts": {
+            "api": {
+                "methods": {},
+                "events": {},
+                "properties": {}
+            }
+        },
+        "types": {}
+    }
+}
